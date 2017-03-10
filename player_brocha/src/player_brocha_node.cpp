@@ -5,6 +5,7 @@
 #include <rwsua2017_libs/player.h>   
 #include <rwsua2017_msgs/MakeAPlay.h>                                                                            
 #include <tf/transform_broadcaster.h>
+#include <tf/transform_listener.h>
 
 using namespace std;
 //using namespace boost;
@@ -22,48 +23,72 @@ namespace rwsua2017 {
         Subscriber sub;
         TransformBroadcaster br; 
 		Transform t1;
+		TransformListener listener;
 		
         MyPlayer(string argin_name, string argin_team_name) : Player(argin_name, argin_team_name) {
 
-           /*
-            n.getParam("red", red_team);
-            n.getParam("green", green_team);
-            n.getParam("blue", blue_team);
-			
-			cout << "red_team:"<<endl;
-            for (size_t i=0;i<red_team.size();i++)
-                cout << red_team[i]<<endl;
-            
-            cout << "green_team:"<<endl;
-            for (size_t i=0;i<green_team.size();i++)
-                cout << green_team[i]<<endl;
-            
-            cout << "blue_team:"<<endl;
-            for (size_t i=0;i<blue_team.size();i++)
-                cout << blue_team[i]<<endl;
-			*/
-			
+           		
             sub = n.subscribe("/make_a_play/cheetah", 1000, &MyPlayer::makeAPlayCallback, this);
             cout << "Initialized MyPlayer" << endl;
 			
-			t1.setOrigin( Vector3(1,1, 0) );
+			t1.setOrigin( Vector3(randNumber(),randNumber(), 0.0));
             Quaternion q;
-			q.setRPY(0, 0, 0);
+			q.setRPY(0, 0,0);
 			t1.setRotation(q);
 			br.sendTransform(StampedTransform(t1, Time::now(), "map", name));
 			
         
         
         }
+        
+			double randNumber(){
+				struct timeval t1;
+				gettimeofday(&t1,NULL);
+				srand(t1.tv_usec);
+				double x =((((double)rand()/(double)RAND_MAX)*2 -1)*5);
 
+				return x;
+			}
+
+		
+		double getAngleTo(string name){
+			
+				
+			   StampedTransform trans;
+			   
+			try{
+				listener.lookupTransform("/brocha", name,Time(0), trans);
+				}
+			catch (TransformException &ex) {
+				
+				ROS_ERROR("%s",ex.what());
+				Duration(1.0).sleep();
+			}
+						
+			float x=trans.getOrigin().y();
+			float y=trans.getOrigin().x();
+			
+			float angle=atan2(y,x);
+			return angle;
+			
+			
+			
+		}
+		
+		
         void makeAPlayCallback(const rwsua2017_msgs::MakeAPlay::ConstPtr& msg) {
 			
 								
             cout << "msg: max displacement -> " << msg->max_displacement << endl;
             //send a information basic to move player
-            float turn_angle=M_PI/10;
+            float turn_angle=getAngleTo("bvieira");
             float displacement = 0.5;
-            
+            double max_t =  (M_PI/30);
+			
+			
+			if (turn_angle > max_t) turn_angle = max_t;
+			else if (turn_angle < -max_t) turn_angle = -max_t;
+			
             //compute the new reference frame
             Transform t_mov;
             Quaternion q;
@@ -84,7 +109,6 @@ namespace rwsua2017 {
 			
 			         
         }
-
 
         vector<string> teammates;
     };
