@@ -1,8 +1,8 @@
 #include <iostream>  
 #include <vector>                                                                                   
+#include <rwsua2017_libs.h>
 
 using namespace std;
-
 namespace rws2017
 {
 
@@ -66,8 +66,7 @@ int main()
 	//because we used <using namespace std>  we can replace the other line
 	//std::cout << "Hello world" << std::endl;
 	cout << "Hello world" << endl;
-
-   
+  
     //Creating an instance of class Player
     rws2017::MyPlayer myplayer("brocha","red");
 
@@ -77,9 +76,7 @@ int main()
     
     myplayer.teammates.push_back("rodolfo");
     myplayer.teammates.push_back("arnaldo");
-    
-    
-    
+       
     // size_t = unsigned long int (sortchut)
     for(size_t i=0; i<myplayer.teammates.size(); ++i)
     {
