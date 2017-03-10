@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
 	rwsua2017_msgs
 	message_generation
 	message_runtime
+	tf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -110,7 +111,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
   #INCLUDE_DIRS include
   #LIBRARIES player_brocha
-  CATKIN_DEPENDS roscpp rospy std_msgs rwsua2017_libs rwsua2017_msgs message_generation	message_runtime
+  CATKIN_DEPENDS roscpp rospy std_msgs rwsua2017_libs rwsua2017_msgs message_generation	message_runtime tf
   #DEPENDS system_lib
 )
 
