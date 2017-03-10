@@ -3,7 +3,7 @@
 #include <rwsua2017_libs.h>
 
 using namespace std;
-namespace rws2017
+namespace rwsua2017
 {
 
 	class Player
