@@ -2,7 +2,6 @@
 #include <vector>    
 //ROS INCLUDES
 #include <ros/ros.h>  
-
 #include <rwsua2017_libs/player.h>   
 #include <rwsua2017_msgs/MakeAPlay.h>                                                                            
 
@@ -10,68 +9,23 @@ using namespace std;
 
 namespace rwsua2017 {
 
-        /*
-            class Player
-            {
-                    public:
-
-                    Player(string argin_name, string argin_team_name="blue")
-                    {
-                            cout << "player name " << argin_name << endl;
-                            this->name = argin_name;
-                            this->team_name = argin_team_name;
-                            set_team_name(argin_team_name);
-                    }
-
-                    string name;
-		
-                    //accessor SET
-                    void set_team_name(string argin_team_name)
-                    {
-                            if (argin_team_name == "red" || argin_team_name == "green" || argin_team_name == "blue")
-                                    this ->team_name=argin_team_name;
-
-                            else
-                                    cout<< "Error: incorrect team name " << endl;
-                    }
-		
-                    //Overloaded accessor
-                    void set_team_name(void)
-                    {
-                            set_team_name("red"); // default value
-                    }
-		
-                    //accessor SET
-                    string get_team_name(void)
-                    {
-                            return this->team_name;
-                    }
-		
-		
-                    private:
-                    string team_name;
-            };
-	
-     */
-
+       
     class MyPlayer : public Player //inherits the class Player
     {
     public:
-
-        ros::NodeHandle n;
+	
+        
         ros::Subscriber sub;
-        vector<string> red_team;
-        vector<string> green_team;
-        vector<string> blue_team;
-
+               
+		
         MyPlayer(string argin_name, string argin_team_name) : Player(argin_name, argin_team_name) {
 
+           /*
             n.getParam("red", red_team);
             n.getParam("green", green_team);
             n.getParam("blue", blue_team);
-
-
-            cout << "red_team:"<<endl;
+			
+			cout << "red_team:"<<endl;
             for (size_t i=0;i<red_team.size();i++)
                 cout << red_team[i]<<endl;
             
@@ -82,7 +36,8 @@ namespace rwsua2017 {
             cout << "blue_team:"<<endl;
             for (size_t i=0;i<blue_team.size();i++)
                 cout << blue_team[i]<<endl;
-
+			*/
+			
             sub = n.subscribe("/make_a_play", 1000, &MyPlayer::makeAPlayCallback, this);
             cout << "Initialized MyPlayer" << endl;
         }
