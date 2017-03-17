@@ -265,29 +265,36 @@ namespace rwsua2017 {
                              
             if (distanciaEnimigo > distanciaPresa) {
 
-                playerF[1] = "apanha";
+                //playerF[1] = "apanha";
+                playerF.push_back("apanha");
                 
                 if (d1 < d2 && d1 < d3) {
-                    playerF[2] = "fsilva";
+                    playerF.push_back("fsilva");
                     //distanciaPresa = d1;
                 } else if (d2 < d3 && d2 < d1) {
-                    playerF[2] = "jferreira";
+                    //playerF[2] = "jferreira";
+                    playerF.push_back("jferreira");
                     //distanciaPresa = d2;
                 } else {
-                    playerF[2] = "rmartins";
+                    //playerF[2] = "rmartins";
+                    playerF.push_back("rmartins");
                     //distanciaPresa = d3;
                 }
 
             } else {
-
-                playerF[1] = "foge";
+                    
+                playerF.push_back("foge");
                         
                 if (d4 < d5 && d4 < d6) {
-                    playerF[2] = "dcorreia";
+                    //playerF[2] = "dcorreia";
+                    playerF.push_back("dcorreia");
+                    
                 } else if (d5 < d6 && d5 < d4) {
-                    playerF[2] = "jsousa";
+                    //playerF[2] = "jsousa";
+                    playerF.push_back("jsousa");
                 } else {
-                    playerF[2] = "vsilva";
+                    //playerF[2] = "vsilva";
+                    playerF.push_back("vsilva");
                 }
             }
             return playerF;
@@ -299,11 +306,11 @@ namespace rwsua2017 {
             
             float turn_angle;
             
-            if(decisao[1]=="apanha"){
-                turn_angle =getAngleTo(decisao[2]);
+            if(decisao[0]=="apanha"){
+                turn_angle =getAngleTo(decisao[1]);
                 
             }else{
-                turn_angle = getAngleTo(decisao[2]);
+                turn_angle = getAngleTo(decisao[1]);
                 turn_angle = (M_PI * 5 / 6) + turn_angle;
                 }
             
