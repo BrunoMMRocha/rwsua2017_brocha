@@ -21,14 +21,17 @@ namespace rwsua2017 {
         //properties
         Subscriber sub;
         TransformBroadcaster br;
-        Transform t1;
+        //Transform t1; //memoria local do jogo (cada um dos jogos individuais)//é necessário actualizar sempre que for chamada
         TransformListener listener;
-
+        
         MyPlayer(string argin_name, string argin_team_name) : Player(argin_name, argin_team_name) {
-
+            
+            
             sub = n.subscribe("/make_a_play/cheetah", 1000, &MyPlayer::makeAPlayCallback, this);
             cout << "Initialized MyPlayer" << endl;
-
+            
+            Transform t1;
+            
             t1.setOrigin(Vector3(randNumber(), randNumber(), 0.0));
             Quaternion q;
             q.setRPY(0, 0, 0);
@@ -45,12 +48,14 @@ namespace rwsua2017 {
             return x;
         }
 
-        float getAngleTo(string player_name) {
+        float getAngleTo(string player_name, float time_to_wait = 0.1) {
 
             StampedTransform trans;
+            ros::Time now = Time(0);
 
             try {
-                listener.lookupTransform(name, player_name, Time(0), trans);
+                listener.waitForTransform(name, player_name, now, Duration(time_to_wait));
+                listener.lookupTransform(name, player_name, now, trans);
 
             } catch (TransformException &ex) {
 
@@ -63,6 +68,25 @@ namespace rwsua2017 {
 
             return atan2(y, x);
         }
+        
+        tf::StampedTransform getPose( float time_to_wait = 0.1){
+            //função vai atualizar o sistema e vai meter todos em sincronizmo
+            //Transform t1;
+            StampedTransform trans;
+            Time now = Time(0);    
+            try {
+                listener.waitForTransform("map", name, now, Duration(time_to_wait));
+                listener.lookupTransform("map",name , now, trans);
+
+            } catch (TransformException &ex) {
+
+                ROS_ERROR("%s", ex.what());
+                Duration(0.01).sleep();
+            }
+                                               
+            return trans;
+            
+        }
 
         void makeAPlayCallback(const rwsua2017_msgs::MakeAPlay::ConstPtr& msg) {
 
@@ -70,7 +94,6 @@ namespace rwsua2017 {
             //send a information basic to move player
             float turn_angle = getAngleTo("bvieira");
             float displacement = msg->max_displacement;
-
             double max_t = (M_PI / 30);
 
             if (turn_angle > max_t) turn_angle = max_t;
@@ -84,12 +107,12 @@ namespace rwsua2017 {
             t_mov.setRotation(q);
             t_mov.setOrigin(Vector3(displacement, 0.0, 0.0));
 
-            Transform t = t1 * t_mov;
+            Transform t = getPose() * t_mov;
 
             //Send the new transform to ROS
 
             br.sendTransform(StampedTransform(t, Time::now(), "/map", name));
-            t1 = t;
+            
 
         }
         vector<string> teammates;
