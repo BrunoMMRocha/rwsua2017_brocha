@@ -26,7 +26,6 @@ namespace rwsua2017 {
 
         MyPlayer(string argin_name, string argin_team_name) : Player(argin_name, argin_team_name) {
 
-
             sub = n.subscribe("/make_a_play/cheetah", 1000, &MyPlayer::makeAPlayCallback, this);
             cout << "Initialized MyPlayer" << endl;
 
@@ -57,7 +56,7 @@ namespace rwsua2017 {
 
                 ROS_ERROR("%s", ex.what());
                 Duration(0.01).sleep();
-            }4
+            }
 
             float x = trans.getOrigin().x();
             float y = trans.getOrigin().y();
@@ -66,7 +65,6 @@ namespace rwsua2017 {
         }
 
         void makeAPlayCallback(const rwsua2017_msgs::MakeAPlay::ConstPtr& msg) {
-
 
             cout << "msg: max displacement -> " << msg->max_displacement << endl;
             //send a information basic to move player
@@ -94,10 +92,6 @@ namespace rwsua2017 {
             t1 = t;
 
         }
-
-
-
-
         vector<string> teammates;
     };
 }
