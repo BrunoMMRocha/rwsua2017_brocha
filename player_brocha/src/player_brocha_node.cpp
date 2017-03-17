@@ -120,70 +120,12 @@ namespace rwsua2017 {
 
         }
 
-       /* string getFar() {
-            float time_to_wait = 0.1;
-
-            StampedTransform trans1;
-            StampedTransform trans2;
-            StampedTransform trans3;
-
-            ros::Time now = Time(0);
-
-            try {
-
-                listener.waitForTransform(name, "dcorreia", now, Duration(time_to_wait));
-                listener.lookupTransform(name, "dcorreia", now, trans1);
-
-                listener.waitForTransform(name, "jsousa", now, Duration(time_to_wait));
-                listener.lookupTransform(name, "jsousa", now, trans2);
-
-                listener.waitForTransform(name, "vsilva", now, Duration(time_to_wait));
-                listener.lookupTransform(name, "vsilva", now, trans3);
-
-
-            } catch (TransformException &ex) {
-
-                ROS_ERROR("%s", ex.what());
-                Duration(0.01).sleep();
-            }
-
-            float d1, d2, d3, distanciaEnimigo;
-            string playerF;
-
-            float x1 = trans1.getOrigin().x();
-            float y1 = trans1.getOrigin().y();
-
-            float x2 = trans2.getOrigin().x();
-            float y2 = trans2.getOrigin().y();
-
-            float x3 = trans3.getOrigin().x();
-            float y3 = trans3.getOrigin().y();
-
-            d1 = sqrt(x1 * x1 + y1 * y1);
-            d2 = sqrt(x2 * x2 + y2 * y2);
-            d3 = sqrt(x3 * x3 + y3 * y3);
-
-            if (d1 < d2 && d1 < d3) {
-                playerF = "dcorreia";
-                distanciaEnimigo = d1;
-            } else if (d2 < d3 && d2 < d1) {
-                playerF = "jsousa";
-                distanciaEnimigo = d2;
-            } else {
-                playerF = "vsilva";
-                distanciaEnimigo = d3;
-            }
-
-            return playerF;
-
-        }*/
-        
         vector<string> getNear() {
             //tratamento para caçar
             float time_to_wait = 0.1;
 
-            StampedTransform trans1,trans2,trans3,trans4,trans5,trans6;
-            
+            StampedTransform trans1, trans2, trans3, trans4, trans5, trans6;
+
             ros::Time now = Time(0);
 
             try {
@@ -197,7 +139,7 @@ namespace rwsua2017 {
                 listener.waitForTransform(name, "rmartins", now, Duration(time_to_wait));
                 listener.lookupTransform(name, "rmartins", now, trans3);
                 //fugir
-                
+
                 listener.waitForTransform(name, "dcorreia", now, Duration(time_to_wait));
                 listener.lookupTransform(name, "dcorreia", now, trans4);
 
@@ -206,7 +148,7 @@ namespace rwsua2017 {
 
                 listener.waitForTransform(name, "vsilva", now, Duration(time_to_wait));
                 listener.lookupTransform(name, "vsilva", now, trans6);
-                
+
 
             } catch (TransformException &ex) {
 
@@ -214,10 +156,10 @@ namespace rwsua2017 {
                 Duration(0.01).sleep();
             }
 
-            float d1, d2, d3, d4, d5, d6, distanciaPresa,distanciaEnimigo;
-                       
+            float d1, d2, d3, d4, d5, d6, distanciaPresa, distanciaEnimigo;
+
             vector<string> playerF;
-            
+
             //string playerF[2];
 
             float x1 = trans1.getOrigin().x();
@@ -228,7 +170,7 @@ namespace rwsua2017 {
 
             float x3 = trans3.getOrigin().x();
             float y3 = trans3.getOrigin().y();
-            
+
             float x4 = trans4.getOrigin().x();
             float y4 = trans4.getOrigin().y();
 
@@ -237,37 +179,37 @@ namespace rwsua2017 {
 
             float x6 = trans6.getOrigin().x();
             float y6 = trans6.getOrigin().y();
-            
-            
+
+
             d1 = sqrt(x1 * x1 + y1 * y1);
             d2 = sqrt(x2 * x2 + y2 * y2);
             d3 = sqrt(x3 * x3 + y3 * y3);
             d4 = sqrt(x4 * x4 + y4 * y4);
             d5 = sqrt(x5 * x5 + y5 * y5);
-            d6 = sqrt(x6 * x6 + y6 * y6);         
-            
-            
-                if (d1 < d2 && d1 < d3) {
-                    distanciaPresa = d1;
-                } else if (d2 < d3 && d2 < d1) {
-                    distanciaPresa = d2;
-                } else {
-                    distanciaPresa = d3;
-                }
-                        
-                if (d4 < d5 && d4 < d6) {
-                    distanciaEnimigo = d4;
-                } else if (d5 < d6 && d5 < d4) {
-                    distanciaEnimigo = d5;
-                } else {
-                    distanciaEnimigo = d6;
-                }
-                             
+            d6 = sqrt(x6 * x6 + y6 * y6);
+
+
+            if (d1 < d2 && d1 < d3) {
+                distanciaPresa = d1;
+            } else if (d2 < d3 && d2 < d1) {
+                distanciaPresa = d2;
+            } else {
+                distanciaPresa = d3;
+            }
+
+            if (d4 < d5 && d4 < d6) {
+                distanciaEnimigo = d4;
+            } else if (d5 < d6 && d5 < d4) {
+                distanciaEnimigo = d5;
+            } else {
+                distanciaEnimigo = d6;
+            }
+
             if (distanciaEnimigo > distanciaPresa) {
 
                 //playerF[1] = "apanha";
                 playerF.push_back("apanha");
-                
+
                 if (d1 < d2 && d1 < d3) {
                     playerF.push_back("fsilva");
                     //distanciaPresa = d1;
@@ -282,13 +224,13 @@ namespace rwsua2017 {
                 }
 
             } else {
-                    
+
                 playerF.push_back("foge");
-                        
+
                 if (d4 < d5 && d4 < d6) {
                     //playerF[2] = "dcorreia";
                     playerF.push_back("dcorreia");
-                    
+
                 } else if (d5 < d6 && d5 < d4) {
                     //playerF[2] = "jsousa";
                     playerF.push_back("jsousa");
@@ -300,23 +242,51 @@ namespace rwsua2017 {
             return playerF;
         }
 
+        float getMapDist() {
+
+            float time_to_wait = 0.1;
+            StampedTransform trans;
+            ros::Time now = Time(0);
+
+            try {
+                listener.waitForTransform(name, "map", now, Duration(time_to_wait));
+                listener.lookupTransform(name, "map", now, trans);
+
+            } catch (TransformException &ex) {
+
+                ROS_ERROR("%s", ex.what());
+                Duration(0.01).sleep();
+            }
+
+            float x = trans.getOrigin().x();
+            float y = trans.getOrigin().y();
+
+            return sqrt(x * x + y * y);
+
+        }
+
         void makeAPlayCallback(const rwsua2017_msgs::MakeAPlay::ConstPtr& msg) {
 
             vector<string> decisao = getNear();
-            
+
             float turn_angle;
             
-            if(decisao[0]=="apanha"){
-                turn_angle =getAngleTo(decisao[1]);
-                
-            }else{
+            if (decisao[0] == "apanha") {
                 turn_angle = getAngleTo(decisao[1]);
-                turn_angle = (M_PI * 5 / 6) + turn_angle;
-                }
+            } else {
+                turn_angle = getAngleTo(decisao[1]);
+                turn_angle = (M_PI * 4 / 6) + turn_angle;
+            }
+            
+            if (getMapDist() > 5) {
+                turn_angle = getAngleTo("map");
+            }
             
             float displacement = msg->max_displacement;
-            
+
             cout << "msg: max displacement -> " << msg->max_displacement << endl;
+
+            
 
             move(displacement, msg->max_displacement, turn_angle, M_PI / 30);
 
