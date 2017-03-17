@@ -116,8 +116,9 @@ namespace rwsua2017 {
             
        
         }
-        /*
-        string getNear(void){
+        
+        string getNear(){
+            float time_to_wait = 0.1;
             
             StampedTransform trans1;
             StampedTransform trans2;
@@ -127,14 +128,14 @@ namespace rwsua2017 {
             
             try {
                 
-                listener.waitForTransform(name, "dcorreira", now, Duration(time_to_wait));
-                listener.lookupTransform(name, "dcorreira", now, trans1);
+                listener.waitForTransform(name, "fsilva", now, Duration(time_to_wait));
+                listener.lookupTransform(name, "fsilva", now, trans1);
                 
-                listener.waitForTransform(name, "vsilva", now, Duration(time_to_wait));
-                listener.lookupTransform(name, "vsilva", now, trans2);
+                listener.waitForTransform(name, "jferreira", now, Duration(time_to_wait));
+                listener.lookupTransform(name, "jferreira", now, trans2);
                 
-                listener.waitForTransform(name, "jsousa", now, Duration(time_to_wait));
-                listener.lookupTransform(name, "jsousa", now, trans3);
+                listener.waitForTransform(name, "rmartins", now, Duration(time_to_wait));
+                listener.lookupTransform(name, "rmartins", now, trans3);
                 
                 
             } catch (TransformException &ex) {
@@ -144,35 +145,46 @@ namespace rwsua2017 {
             }
                        
             float d1,d2,d3;
+            string playerF;
             
             float x1 = trans1.getOrigin().x();
-            float y1 = trans1.getOrigin().y();
-            d1=atan2(y1, x1);
+            float y1 = trans1.getOrigin().y();         
             
             float x2 = trans2.getOrigin().x();
             float y2 = trans2.getOrigin().y();
-            d2=atan2(y2, x2);
             
             float x3 = trans3.getOrigin().x();
             float y3 = trans3.getOrigin().y();
-            d3=atan2(y3, x3);
             
-            if(d1>d2){return name="dcorreira";}
+            d1=sqrt(x1 * x1 + y1 * y1);
+            d2=sqrt(x2 * x2 + y2 * y2);
+            d3=sqrt(x3 * x3 + y3 * y3);
+            
+            if(d1<d2 && d1<d3){ playerF="fsilva";
+            
+            }else if(d2<d3 && d2<d1){
+                   playerF="jferreira";}
+                   
+            else{playerF="rmartins";
+            }
+                      
+            
+            return playerF ;
             
             
-            
-            return atan2(y, x);
-            
-            
-        }*/
+        }
         
         
         void makeAPlayCallback(const rwsua2017_msgs::MakeAPlay::ConstPtr& msg) {
             
                   //send a information basic to move player
             //getNearbyPlayer();
+            //etNear
+            //float turn_angle = getAngleTo("fsilva");
+            //cout << getNear();
             
-            float turn_angle = getAngleTo("fsilva");
+            float turn_angle = getAngleTo(getNear());
+            
             float displacement =msg->max_displacement;
             //float max_turn_angle = (M_PI / 30);
                         
