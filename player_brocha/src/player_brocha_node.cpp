@@ -25,14 +25,14 @@ namespace rwsua2017 {
         //Transform t1; //memoria local do jogo (cada um dos jogos individuais)//é necessário actualizar sempre que for chamada
         TransformListener listener;
         ros::Publisher vis_pub;
-        
+
         MyPlayer(string argin_name, string argin_team_name) : Player(argin_name, argin_team_name) {
 
 
             sub = n.subscribe("/make_a_play/cheetah", 1000, &MyPlayer::makeAPlayCallback, this);
             cout << "Initialized MyPlayer" << endl;
-             vis_pub = n.advertise<visualization_msgs::Marker>( "/bocas", 0 );
-             
+            vis_pub = n.advertise<visualization_msgs::Marker>("/bocas", 0);
+
             Transform t1;
 
             t1.setOrigin(Vector3(randNumber(), randNumber(), 0.0));
@@ -111,8 +111,8 @@ namespace rwsua2017 {
             t_mov.setRotation(q);
             t_mov.setOrigin(Vector3(displacement, 0.0, 0.0));
 
+            //Transform t = getPose() * t_mov;
             Transform t = getPose() * t_mov;
-
             //Send the new transform to ROS
 
             br.sendTransform(StampedTransform(t, Time::now(), "/map", name));
@@ -120,7 +120,7 @@ namespace rwsua2017 {
 
         }
 
-        string getNear() {
+       /* string getFar() {
             float time_to_wait = 0.1;
 
             StampedTransform trans1;
@@ -131,14 +131,14 @@ namespace rwsua2017 {
 
             try {
 
-                listener.waitForTransform(name, "fsilva", now, Duration(time_to_wait));
-                listener.lookupTransform(name, "fsilva", now, trans1);
+                listener.waitForTransform(name, "dcorreia", now, Duration(time_to_wait));
+                listener.lookupTransform(name, "dcorreia", now, trans1);
 
-                listener.waitForTransform(name, "jferreira", now, Duration(time_to_wait));
-                listener.lookupTransform(name, "jferreira", now, trans2);
+                listener.waitForTransform(name, "jsousa", now, Duration(time_to_wait));
+                listener.lookupTransform(name, "jsousa", now, trans2);
 
-                listener.waitForTransform(name, "rmartins", now, Duration(time_to_wait));
-                listener.lookupTransform(name, "rmartins", now, trans3);
+                listener.waitForTransform(name, "vsilva", now, Duration(time_to_wait));
+                listener.lookupTransform(name, "vsilva", now, trans3);
 
 
             } catch (TransformException &ex) {
@@ -147,7 +147,7 @@ namespace rwsua2017 {
                 Duration(0.01).sleep();
             }
 
-            float d1, d2, d3;
+            float d1, d2, d3, distanciaEnimigo;
             string playerF;
 
             float x1 = trans1.getOrigin().x();
@@ -164,34 +164,151 @@ namespace rwsua2017 {
             d3 = sqrt(x3 * x3 + y3 * y3);
 
             if (d1 < d2 && d1 < d3) {
-                playerF = "fsilva";
+                playerF = "dcorreia";
+                distanciaEnimigo = d1;
             } else if (d2 < d3 && d2 < d1) {
-                playerF = "jferreira";
+                playerF = "jsousa";
+                distanciaEnimigo = d2;
+            } else {
+                playerF = "vsilva";
+                distanciaEnimigo = d3;
             }
-            else {
-                playerF = "rmartins";
-            }
-
-
 
             return playerF;
 
+        }*/
+        
+        vector<string> getNear() {
+            //tratamento para caçar
+            float time_to_wait = 0.1;
 
+            StampedTransform trans1,trans2,trans3,trans4,trans5,trans6;
+            
+            ros::Time now = Time(0);
+
+            try {
+
+                listener.waitForTransform(name, "fsilva", now, Duration(time_to_wait));
+                listener.lookupTransform(name, "fsilva", now, trans1);
+
+                listener.waitForTransform(name, "jferreira", now, Duration(time_to_wait));
+                listener.lookupTransform(name, "jferreira", now, trans2);
+
+                listener.waitForTransform(name, "rmartins", now, Duration(time_to_wait));
+                listener.lookupTransform(name, "rmartins", now, trans3);
+                //fugir
+                
+                listener.waitForTransform(name, "dcorreia", now, Duration(time_to_wait));
+                listener.lookupTransform(name, "dcorreia", now, trans4);
+
+                listener.waitForTransform(name, "jsousa", now, Duration(time_to_wait));
+                listener.lookupTransform(name, "jsousa", now, trans5);
+
+                listener.waitForTransform(name, "vsilva", now, Duration(time_to_wait));
+                listener.lookupTransform(name, "vsilva", now, trans6);
+                
+
+            } catch (TransformException &ex) {
+
+                ROS_ERROR("%s", ex.what());
+                Duration(0.01).sleep();
+            }
+
+            float d1, d2, d3, d4, d5, d6, distanciaPresa,distanciaEnimigo;
+                       
+            vector<string> playerF;
+            
+            //string playerF[2];
+
+            float x1 = trans1.getOrigin().x();
+            float y1 = trans1.getOrigin().y();
+
+            float x2 = trans2.getOrigin().x();
+            float y2 = trans2.getOrigin().y();
+
+            float x3 = trans3.getOrigin().x();
+            float y3 = trans3.getOrigin().y();
+            
+            float x4 = trans4.getOrigin().x();
+            float y4 = trans4.getOrigin().y();
+
+            float x5 = trans5.getOrigin().x();
+            float y5 = trans5.getOrigin().y();
+
+            float x6 = trans6.getOrigin().x();
+            float y6 = trans6.getOrigin().y();
+            
+            
+            d1 = sqrt(x1 * x1 + y1 * y1);
+            d2 = sqrt(x2 * x2 + y2 * y2);
+            d3 = sqrt(x3 * x3 + y3 * y3);
+            d4 = sqrt(x4 * x4 + y4 * y4);
+            d5 = sqrt(x5 * x5 + y5 * y5);
+            d6 = sqrt(x6 * x6 + y6 * y6);         
+            
+            
+                if (d1 < d2 && d1 < d3) {
+                    distanciaPresa = d1;
+                } else if (d2 < d3 && d2 < d1) {
+                    distanciaPresa = d2;
+                } else {
+                    distanciaPresa = d3;
+                }
+                        
+                if (d4 < d5 && d4 < d6) {
+                    distanciaEnimigo = d4;
+                } else if (d5 < d6 && d5 < d4) {
+                    distanciaEnimigo = d5;
+                } else {
+                    distanciaEnimigo = d6;
+                }
+                             
+            if (distanciaEnimigo > distanciaPresa) {
+
+                playerF[1] = "apanha";
+                
+                if (d1 < d2 && d1 < d3) {
+                    playerF[2] = "fsilva";
+                    //distanciaPresa = d1;
+                } else if (d2 < d3 && d2 < d1) {
+                    playerF[2] = "jferreira";
+                    //distanciaPresa = d2;
+                } else {
+                    playerF[2] = "rmartins";
+                    //distanciaPresa = d3;
+                }
+
+            } else {
+
+                playerF[1] = "foge";
+                        
+                if (d4 < d5 && d4 < d6) {
+                    playerF[2] = "dcorreia";
+                } else if (d5 < d6 && d5 < d4) {
+                    playerF[2] = "jsousa";
+                } else {
+                    playerF[2] = "vsilva";
+                }
+            }
+            return playerF;
         }
 
         void makeAPlayCallback(const rwsua2017_msgs::MakeAPlay::ConstPtr& msg) {
 
-            //send a information basic to move player
-            //getNearbyPlayer();
-            //etNear
-            //float turn_angle = getAngleTo("fsilva");
-            //cout << getNear();
-
-            float turn_angle = getAngleTo(getNear());
-
+            vector<string> decisao = getNear();
+            
+            float turn_angle;
+            
+            if(decisao[1]=="apanha"){
+                turn_angle =getAngleTo(decisao[2]);
+                
+            }else{
+                turn_angle = getAngleTo(decisao[2]);
+                turn_angle = (M_PI * 5 / 6) + turn_angle;
+                }
+            
             float displacement = msg->max_displacement;
-            //float max_turn_angle = (M_PI / 30);
-
+            
             cout << "msg: max displacement -> " << msg->max_displacement << endl;
 
             move(displacement, msg->max_displacement, turn_angle, M_PI / 30);
