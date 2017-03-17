@@ -87,18 +87,19 @@ namespace rwsua2017 {
             return trans;
             
         }
-
-        void makeAPlayCallback(const rwsua2017_msgs::MakeAPlay::ConstPtr& msg) {
-
-            cout << "msg: max displacement -> " << msg->max_displacement << endl;
-            //send a information basic to move player
-            float turn_angle = getAngleTo("bvieira");
-            float displacement = msg->max_displacement;
-            double max_t = (M_PI / 30);
-
-            if (turn_angle > max_t) turn_angle = max_t;
-            else if (turn_angle < -max_t) turn_angle = -max_t;
-
+        
+        void move(float displacement,float max_displacement, float turn_angle,float max_turn_angle){
+      
+            //float displacement = msg->max_displacement;
+                        
+            //max turn angle
+            if (turn_angle > max_turn_angle) turn_angle = max_turn_angle;
+            else if (turn_angle < -max_turn_angle) turn_angle = -max_turn_angle;
+            //max displacmente
+            if (displacement > max_displacement) displacement = max_displacement;
+            else if (displacement < -max_displacement) displacement = -max_displacement;
+            
+            
             //compute the new reference frame
             Transform t_mov;
             Quaternion q;
@@ -106,13 +107,78 @@ namespace rwsua2017 {
 
             t_mov.setRotation(q);
             t_mov.setOrigin(Vector3(displacement, 0.0, 0.0));
-
+            
             Transform t = getPose() * t_mov;
 
             //Send the new transform to ROS
 
             br.sendTransform(StampedTransform(t, Time::now(), "/map", name));
             
+       
+        }
+        /*
+        string getNear(void){
+            
+            StampedTransform trans1;
+            StampedTransform trans2;
+            StampedTransform trans3;
+            
+            ros::Time now = Time(0);
+            
+            try {
+                
+                listener.waitForTransform(name, "dcorreira", now, Duration(time_to_wait));
+                listener.lookupTransform(name, "dcorreira", now, trans1);
+                
+                listener.waitForTransform(name, "vsilva", now, Duration(time_to_wait));
+                listener.lookupTransform(name, "vsilva", now, trans2);
+                
+                listener.waitForTransform(name, "jsousa", now, Duration(time_to_wait));
+                listener.lookupTransform(name, "jsousa", now, trans3);
+                
+                
+            } catch (TransformException &ex) {
+
+                ROS_ERROR("%s", ex.what());
+                Duration(0.01).sleep();
+            }
+                       
+            float d1,d2,d3;
+            
+            float x1 = trans1.getOrigin().x();
+            float y1 = trans1.getOrigin().y();
+            d1=atan2(y1, x1);
+            
+            float x2 = trans2.getOrigin().x();
+            float y2 = trans2.getOrigin().y();
+            d2=atan2(y2, x2);
+            
+            float x3 = trans3.getOrigin().x();
+            float y3 = trans3.getOrigin().y();
+            d3=atan2(y3, x3);
+            
+            if(d1>d2){return name="dcorreira";}
+            
+            
+            
+            return atan2(y, x);
+            
+            
+        }*/
+        
+        
+        void makeAPlayCallback(const rwsua2017_msgs::MakeAPlay::ConstPtr& msg) {
+            
+                  //send a information basic to move player
+            //getNearbyPlayer();
+            
+            float turn_angle = getAngleTo("fsilva");
+            float displacement =msg->max_displacement;
+            //float max_turn_angle = (M_PI / 30);
+                        
+            cout << "msg: max displacement -> " << msg->max_displacement << endl;
+            
+            move(displacement, msg->max_displacement, turn_angle, M_PI/30);      
 
         }
         vector<string> teammates;
